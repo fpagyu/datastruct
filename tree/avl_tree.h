@@ -6,24 +6,23 @@
 #define DATASTRUCT_AVL_TREE_H
 
 #include "tree.h"
+#include "b_search.h"
 
 template<typename T>
 class AVLNode: public TreeNode<T> {
 public:
-    int val;
     int height;
     AVLNode<T> *left;
     AVLNode<T> *right;
 
-    inline T value() { return val; }
-    inline AVLNode<T>* lchild() { return left; }
-    inline AVLNode<T>* rchild() { return right; }
+    AVLNode<T>* lchild() { return left; }
+    AVLNode<T>* rchild() { return right; }
 
-    explicit AVLNode(T val): val(val), height(0), left(nullptr), right(nullptr) {}
+    explicit AVLNode(T val): height(0), left(nullptr), right(nullptr) { TreeNode<T>::value = val; }
 };
 
 template <typename T>
-class AVLTree: public Tree<T> {
+class AVLTree: public BSearchTree<T> {
 private:
     int max(int a, int b) {
         return a>b ? a:b;
@@ -43,8 +42,8 @@ private:
     AVLNode<T>* RL_rotate(AVLNode<T> *node);
 
 public:
-    AVLTree(): Tree<T>(nullptr) {}
-    explicit AVLTree(T val): Tree<T>(new AVLNode<T>(val)) {}
+    AVLTree(): BSearchTree<T>(nullptr) {}
+    explicit AVLTree(T val): BSearchTree<T>(new AVLNode<T>(val)) {}
 };
 
 #endif //DATASTRUCT_AVL_TREE_H

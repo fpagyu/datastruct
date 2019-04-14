@@ -10,7 +10,7 @@
 template <typename T>
 class TreeNode {
 public:
-    virtual T value() = 0;
+    T value;
     virtual TreeNode<T>* lchild() = 0;
     virtual TreeNode<T>* rchild() = 0;
 
@@ -27,7 +27,7 @@ private:
             return;
         }
 
-        std::cout << node->value() << std::endl;
+        std::cout << node->value << std::endl;
         pre_order_traversal(node->lchild());
         pre_order_traversal(node->rchild());
     }
@@ -43,6 +43,7 @@ private:
         delete node;
     }
 public:
+    Tree(): root(nullptr) {}
     explicit Tree(TreeNode<T> *node): root(node) {}
     ~Tree() { delete_tree(root); }
 
