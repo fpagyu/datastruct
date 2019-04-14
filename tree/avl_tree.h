@@ -17,8 +17,8 @@ public:
 
     AVLNode<T>* lchild() { return left; }
     AVLNode<T>* rchild() { return right; }
-    void set_lchild(const TreeNode<T>* node) { left = (AVLNode<T>*)node; }
-    void set_rchild(const TreeNode<T>* node) { right = (AVLNode<T>*)node; }
+    void set_lchild(const T& v) { left = new AVLNode<T>(v); }
+    void set_rchild(const T& v) { right = new AVLNode<T>(v); }
 
     explicit AVLNode(T val): height(0), left(nullptr), right(nullptr) { TreeNode<T>::value = val; }
 };
@@ -48,11 +48,12 @@ public:
     explicit AVLTree(T val): BSearchTree<T>(new AVLNode<T>(val)) {}
 
     void insert(const T& v) {
-        auto *node = new AVLNode<T>(v);
-        if (!BSearchTree<T>::insert(node)) {
-            // 插入失败
-            delete node;
+        if (Tree<T>::root == nullptr) {
+            Tree<T>::root = new AVLNode<T>(v);
+            return;
         }
+
+        BSearchTree<T>::insert(v);
     }
 };
 

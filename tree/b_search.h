@@ -33,34 +33,32 @@ public:
         }
     }
 
-    bool insert(TreeNode<T> *node) {
-        if (Tree<T>::root == nullptr) {
-            Tree<T>::root = node;
-            return true;
-        }
+    virtual void insert(const T& v) {
+//        if (Tree<T>::root == nullptr) {
+//            Tree<T>::root = node;
+//            return;
+//        }
 
         TreeNode<T> *cur = Tree<T>::root;
         while(cur) {
-            if (node->value == cur->value) {
-                return false;
+            if (v == cur->value) {
+                return;
             }
 
-            if (node->value < cur->value) {
+            if (v < cur->value) {
                 if (cur->lchild() == nullptr) {
-                    cur->set_lchild(node);
-                    return true;
+                    cur->set_lchild(v);
+                    return;
                 }
                 cur = cur->lchild();
             } else {
                 if (cur->rchild() == nullptr) {
-                    cur->set_rchild(node);
-                    return true;
+                    cur->set_rchild(v);
+                    return;
                 }
                 cur = cur->rchild();
             }
         }
-
-        return false;
     }
 };
 
