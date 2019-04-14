@@ -13,6 +13,8 @@ public:
     T value;
     virtual TreeNode<T>* lchild() = 0;
     virtual TreeNode<T>* rchild() = 0;
+    virtual void set_lchild(const TreeNode<T>*) = 0;
+    virtual void set_rchild(const TreeNode<T>*) = 0;
 
     virtual ~TreeNode() = default;
 };

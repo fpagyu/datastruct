@@ -33,35 +33,35 @@ public:
         }
     }
 
-//    bool insert(TreeNode<T> *node) {
-//        if (root == nullptr) {
-//            root = node;
-//            return true;
-//        }
-//
-//        TreeNode<T> *cur = root;
-//        while(cur) {
-//            if (node->value() == cur->value()) {
-//                return false;
-//            }
-//
-//            if (node->value() < cur->value()) {
-//                if (cur->lchild() == nullptr) {
-//                    cur->set_lchild(node);
-//                    return true;
-//                }
-//                cur = cur->lchild();
-//            } else {
-//                if (cur->rchild() == nullptr) {
-//                    cur->set_rchild(node);
-//                    return true;
-//                }
-//                cur = cur->rchild();
-//            }
-//        }
-//
-//        return false;
-//    }
+    bool insert(TreeNode<T> *node) {
+        if (Tree<T>::root == nullptr) {
+            Tree<T>::root = node;
+            return true;
+        }
+
+        TreeNode<T> *cur = Tree<T>::root;
+        while(cur) {
+            if (node->value == cur->value) {
+                return false;
+            }
+
+            if (node->value < cur->value) {
+                if (cur->lchild() == nullptr) {
+                    cur->set_lchild(node);
+                    return true;
+                }
+                cur = cur->lchild();
+            } else {
+                if (cur->rchild() == nullptr) {
+                    cur->set_rchild(node);
+                    return true;
+                }
+                cur = cur->rchild();
+            }
+        }
+
+        return false;
+    }
 };
 
 

@@ -17,6 +17,8 @@ public:
 
     AVLNode<T>* lchild() { return left; }
     AVLNode<T>* rchild() { return right; }
+    void set_lchild(const TreeNode<T>* node) { left = (AVLNode<T>*)node; }
+    void set_rchild(const TreeNode<T>* node) { right = (AVLNode<T>*)node; }
 
     explicit AVLNode(T val): height(0), left(nullptr), right(nullptr) { TreeNode<T>::value = val; }
 };
@@ -44,6 +46,14 @@ private:
 public:
     AVLTree(): BSearchTree<T>(nullptr) {}
     explicit AVLTree(T val): BSearchTree<T>(new AVLNode<T>(val)) {}
+
+    void insert(const T& v) {
+        auto *node = new AVLNode<T>(v);
+        if (!BSearchTree<T>::insert(node)) {
+            // 插入失败
+            delete node;
+        }
+    }
 };
 
 #endif //DATASTRUCT_AVL_TREE_H
