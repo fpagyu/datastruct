@@ -10,41 +10,43 @@
 template <typename T>
 class TreeNode {
 public:
-    T val;
+    virtual T value() = 0;
+    virtual TreeNode<T>* lchild() = 0;
+    virtual TreeNode<T>* rchild() = 0;
 
-    TreeNode(T val): val(val) {}
+    virtual ~TreeNode() = default;
 };
 
 template <typename T>
 class Tree {
 protected:
-    T *root; // 树根节点
+    TreeNode<T> *root; // 树根节点
 private:
-    void pre_order_traversal(T *node) {
+    void pre_order_traversal(TreeNode<T> *node) {
         if (node== nullptr) {
             return;
         }
 
-        std::cout << node->val << std::endl;
-        pre_order_traversal(node->left);
-        pre_order_traversal(node->right);
+        std::cout << node->value() << std::endl;
+        pre_order_traversal(node->lchild());
+        pre_order_traversal(node->rchild());
     }
 
-    void delete_tree(T *node) {
+    void delete_tree(TreeNode<T> *node) {
         if (node == nullptr) {
             return;
         }
         std::cout << "destruct!!!" << std::endl;
 
-        delete_tree(node->left);
-        delete_tree(node->right);
+        delete_tree(node->lchild());
+        delete_tree(node->rchild());
         delete node;
     }
 public:
-    Tree(T *node): root(node) {}
+    explicit Tree(TreeNode<T> *node): root(node) {}
     ~Tree() { delete_tree(root); }
 
-    T* get_root() { return root; }
+    TreeNode<T>* get_root() { return root; }
     void pre_order_traversal() { pre_order_traversal(root); }
 };
 

@@ -10,15 +10,20 @@
 template<typename T>
 class AVLNode: public TreeNode<T> {
 public:
+    int val;
     int height;
     AVLNode<T> *left;
     AVLNode<T> *right;
 
-    AVLNode(T val): TreeNode<T>(val), height(0), left(nullptr), right(nullptr) {}
+    inline T value() { return val; }
+    inline AVLNode<T>* lchild() { return left; }
+    inline AVLNode<T>* rchild() { return right; }
+
+    explicit AVLNode(T val): val(val), height(0), left(nullptr), right(nullptr) {}
 };
 
 template <typename T>
-class AVLTree: public Tree<AVLNode<T>> {
+class AVLTree: public Tree<T> {
 private:
     int max(int a, int b) {
         return a>b ? a:b;
@@ -38,10 +43,8 @@ private:
     AVLNode<T>* RL_rotate(AVLNode<T> *node);
 
 public:
-    AVLTree(): Tree<AVLNode<T>>(nullptr) {}
-    AVLTree(T val): Tree<AVLNode<T>>(new AVLNode<T>(val)) {}
-    AVLTree(AVLNode<T>* node): Tree<AVLNode<T>>(node) {}
-
+    AVLTree(): Tree<T>(nullptr) {}
+    explicit AVLTree(T val): Tree<T>(new AVLNode<T>(val)) {}
 };
 
 #endif //DATASTRUCT_AVL_TREE_H

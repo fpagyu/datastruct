@@ -4,7 +4,7 @@
 int main(int argc, char* argv[]) {
     auto *tr = new AVLTree<int>(6);
 
-    auto root = tr->get_root();
+    auto root = (AVLNode<int>*)tr->get_root();
     root->left = new AVLNode<int>(5);
     root->right = new AVLNode<int>(13);
 
