@@ -1,20 +1,36 @@
 #include <iostream>
-#include "tree/avl_tree.h"
+#include "tree/bst.h"
 
 int main(int argc, char* argv[]) {
-    auto *tr = new AVLTree<int>(7);
+    //  测试二叉搜索树
+    auto t = new BST<int>(7);
 
-//    auto root = (AVLNode<int>*)tr->get_root();
-//    root->left = new AVLNode<int>(5);
-//    root->right = new AVLNode<int>(13);
-//    tr->insert(7);
-    tr->insert(5);
-    tr->insert(13);
-    tr->insert(4);
-    tr->insert(6);
+    t->insert(5);
+    t->insert(4);
+    t->insert(6);
+    t->insert(new TreeNode<int>(15));
+    t->insert(new TreeNode<int>(18));
+    t->insert(17);
+    t->insert(14);
 
-    tr->pre_order_traversal();
+    t->remove(7);
+    t->pre_order_traversal();
 
-    delete tr;
+    delete t;
+
+    // 测试AVL树
+//    auto t = new AVLTree<int>(7);
+//
+//    t->insert(5);
+//    t->insert(4);
+//    t->insert(6);
+//    t->insert(new AVLNode<int>(15));
+//    t->insert(new AVLNode<int>(18));
+//    t->insert(17);
+//
+//    t->pre_order_traversal();
+
+//    delete t;
+
     return 0;
 }

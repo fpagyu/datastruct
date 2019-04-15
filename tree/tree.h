@@ -6,51 +6,68 @@
 #define DATASTRUCT_TREE_H
 
 #include <iostream>
+#include <stack>
 
-template <typename T>
-class TreeNode {
-public:
-    T value;
-    virtual TreeNode<T>* lchild() = 0;
-    virtual TreeNode<T>* rchild() = 0;
-    virtual void set_lchild(const T&) = 0;
-    virtual void set_rchild(const T&) = 0;
-
-    virtual ~TreeNode() = default;
-};
+/*
+ * Tree nodes' structure
+ *   template <typename T>
+ *   struct TreeNode {
+ *       T value;
+ *       TreeNode<T>* left;
+ *       TreeNode<T>* right;
+ *   };
+ */
 
 template <typename T>
 class Tree {
-protected:
-    TreeNode<T> *root; // 树根节点
-private:
-    void pre_order_traversal(TreeNode<T> *node) {
-        if (node== nullptr) {
-            return;
-        }
+public:
+    static void delete_tree(T *node);
+    static void pre_order_traversal(T *node);
 
-        std::cout << node->value << std::endl;
-        pre_order_traversal(node->lchild());
-        pre_order_traversal(node->rchild());
+    virtual T* get_root() = 0;
+    virtual void pre_order_traversal() { Tree<T>::pre_order_traversal(get_root()); }
+};
+
+template <typename T>
+void Tree<T>::delete_tree(T *node) {
+    // 递归方式
+//    if (node == nullptr) {
+//        return;
+//    }
+//
+//    delete_tree(node->left);
+//    delete_tree(node->right);
+//    delete node;
+    // 非递归方式
+    if (node == nullptr) {
+        return ;
     }
 
-    void delete_tree(TreeNode<T> *node) {
-        if (node == nullptr) {
-            return;
+    std::stack<T*> s = std::stack<T*>();
+    s.push(node);
+    while (s.size()) {
+        node = s.top();
+        s.pop();
+        if (node->right) {
+            s.push(node->right);
         }
-        std::cout << "destruct!!!" << std::endl;
 
-        delete_tree(node->lchild());
-        delete_tree(node->rchild());
+        if (node->left) {
+            s.push(node->left);
+        }
         delete node;
     }
-public:
-    Tree(): root(nullptr) {}
-    explicit Tree(TreeNode<T> *node): root(node) {}
-    ~Tree() { delete_tree(root); }
+}
 
-    TreeNode<T>* get_root() { return root; }
-    void pre_order_traversal() { pre_order_traversal(root); }
-};
+template <typename T>
+void Tree<T>::pre_order_traversal(T *node) {
+    if (node== nullptr) {
+        return;
+    }
+
+    std::cout << node->value << std::endl;
+    pre_order_traversal(node->left);
+    pre_order_traversal(node->right);
+}
 
 #endif //DATASTRUCT_TREE_H
