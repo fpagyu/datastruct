@@ -30,7 +30,7 @@ public:
     explicit BST(TreeNode<T> *node):root(node) {}
     explicit BST(const T& v): root(new TreeNode<T>(v)) {}
     ~BST() {
-        Tree<TreeNode<T>>::delete_tree(root);
+        this->delete_tree(root);
     }
 
     TreeNode<T>* get_root() { return root; }

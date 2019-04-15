@@ -6,7 +6,6 @@
 #define DATASTRUCT_TREE_H
 
 #include <iostream>
-#include <stack>
 
 /*
  * Tree nodes' structure
@@ -20,43 +19,37 @@
 
 template <typename T>
 class Tree {
+protected:
+    void delete_tree(T *node);
+    void pre_order_traversal(T *node);
 public:
-    static void delete_tree(T *node);
-    static void pre_order_traversal(T *node);
-
     virtual T* get_root() = 0;
-    virtual void pre_order_traversal() { Tree<T>::pre_order_traversal(get_root()); }
+    virtual int  get_height(T *node);
+    virtual void pre_order_traversal() { pre_order_traversal(get_root()); }
 };
 
 template <typename T>
 void Tree<T>::delete_tree(T *node) {
     // 递归方式
-//    if (node == nullptr) {
-//        return;
-//    }
-//
-//    delete_tree(node->left);
-//    delete_tree(node->right);
-//    delete node;
-    // 非递归方式
     if (node == nullptr) {
-        return ;
+        return;
     }
 
-    std::stack<T*> s = std::stack<T*>();
-    s.push(node);
-    while (s.size()) {
-        node = s.top();
-        s.pop();
-        if (node->right) {
-            s.push(node->right);
-        }
+    delete_tree(node->left);
+    delete_tree(node->right);
+    delete node;
+}
 
-        if (node->left) {
-            s.push(node->left);
-        }
-        delete node;
+template <typename T>
+int Tree<T>::get_height(T *node) {
+    if (node == nullptr) {
+        return 0;
     }
+
+    int l = 1 + get_height(node->left);
+    int r = 1 + get_height(node->right);
+
+    return (l > r) ? l : r;
 }
 
 template <typename T>

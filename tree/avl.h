@@ -21,7 +21,7 @@ public:
 };
 
 template <typename T>
-class AVLTree: public Tree<AVLNode<T>> {
+class AVL: public Tree<AVLNode<T>> {
 private:
     AVLNode<T> *root;
 
@@ -42,17 +42,21 @@ public:
     // RL 型结构, 先右旋后左旋
     AVLNode<T>* RL_rotate(AVLNode<T> *node);
 
-public:
-    AVLTree() = default;
-    explicit AVLTree(AVLNode<T> *node): Tree<AVLNode<T>>(node) {}
-    explicit AVLTree(const T& val): Tree<AVLNode<T>>(new AVLNode<T>(val)) {}
+    AVL() = default;
+    explicit AVL(AVLNode<T> *node): root(node) {}
+    explicit AVL(const T& v): root(new AVLNode<T>(v)) {}
 
-    int insert(AVLNode<T> *node);
-    int insert(const T& v);
+    AVLNode<T>* get_root() { return root; }
+
+    AVLNode<T>* insert(AVLNode<T> *root, const T& v);
+    AVLNode<T>* insert(const T& v) {
+        root = insert(root, v);
+        return root;
+    }
 };
 
 template <typename T>
-AVLNode<T>* AVLTree<T>::LL_rotate(AVLNode<T> *node) {
+AVLNode<T>* AVL<T>::LL_rotate(AVLNode<T> *node) {
     // node 为失衡点
 
     AVLNode<T> *lchild = node->left;
@@ -68,7 +72,7 @@ AVLNode<T>* AVLTree<T>::LL_rotate(AVLNode<T> *node) {
 }
 
 template <typename T>
-AVLNode<T>* AVLTree<T>::RR_rotate(AVLNode<T> *node) {
+AVLNode<T>* AVL<T>::RR_rotate(AVLNode<T> *node) {
     AVLNode<T> *rchild = node->right;
 
     node->right = rchild->left;
@@ -82,61 +86,56 @@ AVLNode<T>* AVLTree<T>::RR_rotate(AVLNode<T> *node) {
 }
 
 template <typename T>
-AVLNode<T>* AVLTree<T>::LR_rotate(AVLNode<T> *node) {
+AVLNode<T>* AVL<T>::LR_rotate(AVLNode<T> *node) {
     // 先左旋， 后右旋
     node->left = RR_rotate(node->left);
     return LL_rotate(node);
 }
 
 template <typename T>
-AVLNode<T>* AVLTree<T>::RL_rotate(AVLNode<T> *node) {
+AVLNode<T>* AVL<T>::RL_rotate(AVLNode<T> *node) {
     // 先右旋， 后左旋
     node->right = LL_rotate(node->right);
     return RR_rotate(node);
 }
 
 template<typename T>
-int AVLTree<T>::insert(AVLNode<T> *node) {
-    if (root == nullptr) {
-        root = node;
-        return 0;
+AVLNode<T>* AVL<T>::insert(AVLNode<T>* node, const T& v) {
+    if (node == nullptr) {
+        node = new AVLNode<T>(v);
+        return node;
     }
 
-    AVLNode<T> *cur = node;
-    // 寻找插入点
-    while(cur) {
-        if (node->value == cur->value) {
-            return -1;
-        }
-
-        if (node->value < cur->value) {
-            // 往当前左子树中查找
-            if (cur->left == nullptr) {
-                cur->left = node;
-                break;
+    if (v < (node->value)) {
+        // 插入的值小于节点值
+        node->left = insert(node->left, v);
+        if (height(node->left) - height(node->right) > 1) {
+            if (v < node->left->value) {
+                // LL 失衡
+                node = LL_rotate(node);
+            } else {
+                // LR 失衡
+                node = LR_rotate(node);
             }
-            cur = cur->left;
-        } else {
-            // 往当前右子树中查找
-            if (cur->right == nullptr) {
-                cur->right = node;
-                break;
+        }
+    } else {
+        node->right = insert(node->right, v);
+        if (height(node->left) - height(node->right) > 1) {
+            if (v > node->right->value) {
+                // RR 失衡
+                node = RR_rotate(node);
+            } else {
+                // RL 失衡
+                node = RL_rotate(node);
             }
-            cur = cur->right;
         }
     }
 
-    return 0;
-}
+    int l_height = 1 + height(node->left);
+    int r_height = 1 + height(node->right);
+    node->height = l_height > r_height ? l_height: r_height;
 
-template <typename T>
-int AVLTree<T>::insert(const T& v) {
-    auto node = new AVLNode<T>(v);
-    int r = insert(node);
-    if (r == -1) {
-        delete node;
-    }
-    return r;
+    return node;
 }
 
 #endif //DATASTRUCT_AVL_TREE_H
