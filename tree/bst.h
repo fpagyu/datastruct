@@ -184,28 +184,23 @@ TreeNode<T>* BST<T>::remove_node(TreeNode<T>* node, const T& v) {
     // 算法: 1. 找到待删节点
     // 2. 以待删节点的右子树中最小的节点代替待删节点
     // 3. 如果待删节点的右子树为null, 则以待删节点的左节点代替待删节点
+    // 注解： 其本质就是找到一个合适的值, 能替代待删节点, 满足大于所有左子树节点同时小于所有右子树节点
+    TreeNode<T>* min_node;
     if (cur->right == nullptr) {
-        if (parent == nullptr) {
-            node = cur->left;
-        } else if (parent->left == cur) {
-            parent->left = cur->left;
-        } else {
-            parent->right = cur->left;
-        }
+        min_node = cur->left;
     } else {
-        TreeNode<T>* min_node = find_min(cur->right);
+        min_node = find_min(cur->right);
         min_node = remove_node(cur->right, min_node->value);
-
-        if (parent == nullptr) {
-            node = min_node;
-        } else if (parent->left == cur) {
-            parent->left = min_node;
-        } else {
-            parent->right = min_node;
-        }
-
         min_node->left = cur->left;
         min_node->right = cur->right;
+    }
+
+    if (parent == nullptr) {
+        node = min_node;
+    } else if (parent->left == cur) {
+        parent->left = min_node;
+    } else {
+        parent->right = min_node;
     }
 
     if (cur == root) {
