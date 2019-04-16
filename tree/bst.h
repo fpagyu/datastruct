@@ -75,31 +75,15 @@ public:
 
 template <typename T>
 TreeNode<T>* BST<T>::find(TreeNode<T>* node, const T& v) {
-    // 递归方式
-//    if (node == nullptr) {
-//        return nullptr;
-//    }
-//
-//    if (v == node->value) {
-//        return node;
-//    }
-//
-//    if (v < node->value) {
-//        return find(node->left, v);
-//    }
-//
-//    return find(node->right, v);
     // 非递归方式
-    TreeNode<T> *cur = node;
-    while (cur) {
-        if (v == cur->value) {
+    while (node) {
+        if (v == node->value) {
             break;
         }
-
-        cur = (v < cur->value) ? cur->left: cur->right;
+        node = (v < node->value) ? node->left : node->right;
     }
 
-    return cur;
+    return node;
 }
 
 template <typename T>
