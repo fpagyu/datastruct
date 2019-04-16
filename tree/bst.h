@@ -207,7 +207,6 @@ TreeNode<T>* BST<T>::remove_node(TreeNode<T>* node, const T& v) {
         root = node;
     }
 
-    // 待删除节点有一个左节点
     return cur;
 }
 
