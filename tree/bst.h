@@ -1,5 +1,6 @@
 //
 // Created by zhijun yu on 2019/4/14.
+// 二叉搜索树
 //
 
 #ifndef DATASTRUCT_B_SEARCH_H
@@ -155,59 +156,57 @@ int BST<T>::insert(const T& v) {
 }
 
 template <typename T>
-TreeNode<T>* BST<T>::remove_node(TreeNode<T>* node, const T& v) {
-    TreeNode<T>* parent = nullptr;
-    TreeNode<T>* cur = node;
-    while(cur) {
-        // 查找删除点
-        if (v == cur->value) {
+TreeNode<T> *BST<T>::remove_node(TreeNode<T> *node, const T &v) {
+    // 找到待删节点, 及其父节点
+    TreeNode<T> *parent = nullptr;
+    while (node != nullptr) {
+        if (v == node->value) {
             break;
         }
-
-        parent = cur;
-        if (v < cur->value) {
-            if (cur->left == nullptr) {
-                return nullptr;
-            }
-            cur = cur->left;
-        } else {
-            if (cur->right == nullptr) {
-                return nullptr;
-            }
-            cur = cur->right;
-        }
+        parent = node;
+        node = (v < node->value) ? node->left : node->right;
     }
-    if (cur == nullptr) {
+
+    if (node == nullptr) {
+        // 未找到待删节点
         return nullptr;
     }
 
-    // 算法: 1. 找到待删节点
-    // 2. 以待删节点的右子树中最小的节点代替待删节点
-    // 3. 如果待删节点的右子树为null, 则以待删节点的左节点代替待删节点
-    // 注解： 其本质就是找到一个合适的值, 能替代待删节点, 满足大于所有左子树节点同时小于所有右子树节点
-    TreeNode<T>* min_node;
-    if (cur->right == nullptr) {
-        min_node = cur->left;
+    // 此时, 待删节点及其父节点已经确定
+    // 考虑删除节点的算法, 其本质就是在待删节点的左右子树中找到一个合适的节点来代替待删节点
+    // 这个“合适”的标准, 便是满足代替新节点后, 其左子树都小于该节点, 右子树都大于该节点
+    // 由此可得, 这个合适的节点便是待删节点右子树中的最小节点(考虑为什么不是左子树的最大节点?),
+    // 因为该节点一定是叶子节点
+    // 算法:
+    // 1. 假如待删节点的右子树为null, 则直接已待删节点左孩子节点代替待删节点
+    // 2. 如果待删除节点右子树不为null, 找出右子树中的最小节点, 代替待删除节点, 同时移除右子树中的这个最小节点
+    // 3. 将待删节点的父节点重新指向新节点
+    TreeNode<T> *new_node;
+    if (node->right == nullptr) {
+        new_node = node->left;
     } else {
-        min_node = find_min(cur->right);
-        min_node = remove_node(cur->right, min_node->value);
-        min_node->left = cur->left;
-        min_node->right = cur->right;
+        new_node = find_min(node->right);
+        remove_node(node->right, new_node->value);
+        new_node->left = node->left;
+        new_node->right = node->right;
     }
 
-    if (parent == nullptr) {
-        node = min_node;
-    } else if (parent->left == cur) {
-        parent->left = min_node;
-    } else {
-        parent->right = min_node;
+    node->left = nullptr;
+    node->right = nullptr;
+    if (parent != nullptr) {
+        if (parent->left == node) {
+            parent->left = new_node;
+        } else {
+            parent->right = new_node;
+        }
     }
 
-    if (cur == root) {
-        root = node;
+    if (node == root) {
+        // 待删节点是根节点
+        root = new_node;
     }
 
-    return cur;
+    return node;
 }
 
 template <typename T>
