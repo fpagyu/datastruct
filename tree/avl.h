@@ -48,11 +48,9 @@ public:
 
     AVLNode<T>* get_root() { return root; }
 
-    AVLNode<T>* insert(AVLNode<T> *root, const T& v);
-    AVLNode<T>* insert(const T& v) {
-        root = insert(root, v);
-        return root;
-    }
+    AVLNode<T> *insert(AVLNode<T> *, const T &);
+
+    void insert(const T &);
 };
 
 template <typename T>
@@ -100,7 +98,7 @@ AVLNode<T>* AVL<T>::RL_rotate(AVLNode<T> *node) {
 }
 
 template<typename T>
-AVLNode<T>* AVL<T>::insert(AVLNode<T>* node, const T& v) {
+AVLNode<T> *AVL<T>::insert(AVLNode<T> *node, const T &v) {
     if (node == nullptr) {
         node = new AVLNode<T>(v);
         return node;
@@ -134,6 +132,11 @@ AVLNode<T>* AVL<T>::insert(AVLNode<T>* node, const T& v) {
     node->height = 1 + max(height(node->left), height(node->right));
 
     return node;
+}
+
+template<typename T>
+void AVL<T>::insert(const T &v) {
+    root = insert(root, v);
 }
 
 #endif //DATASTRUCT_AVL_TREE_H
