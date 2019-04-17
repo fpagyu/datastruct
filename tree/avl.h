@@ -118,9 +118,9 @@ AVLNode<T>* AVL<T>::insert(AVLNode<T>* node, const T& v) {
                 node = LR_rotate(node);
             }
         }
-    } else {
+    } else if (v > (node->value)) {
         node->right = insert(node->right, v);
-        if (height(node->left) - height(node->right) > 1) {
+        if (height(node->right) - height(node->left) > 1) {
             if (v > node->right->value) {
                 // RR 失衡
                 node = RR_rotate(node);
@@ -131,9 +131,7 @@ AVLNode<T>* AVL<T>::insert(AVLNode<T>* node, const T& v) {
         }
     }
 
-    int l_height = 1 + height(node->left);
-    int r_height = 1 + height(node->right);
-    node->height = l_height > r_height ? l_height: r_height;
+    node->height = 1 + max(height(node->left), height(node->right));
 
     return node;
 }
