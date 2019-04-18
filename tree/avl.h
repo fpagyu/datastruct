@@ -32,6 +32,8 @@ private:
     int height(const AVLNode<T> *node) {
         return (node == nullptr) ? -1: node->height;
     }
+
+    AVLNode<T> *remove(AVLNode<T> *, const T &);
 public:
     // LL 型结构, 右旋操作
     AVLNode<T>* LL_rotate(AVLNode<T> *node);
@@ -51,6 +53,10 @@ public:
     AVLNode<T> *insert(AVLNode<T> *, const T &);
 
     void insert(const T &);
+
+    void remove(const T &);
+
+    AVLNode<T> *find_min(AVLNode<T> *);
 };
 
 template <typename T>
@@ -137,6 +143,89 @@ AVLNode<T> *AVL<T>::insert(AVLNode<T> *node, const T &v) {
 template<typename T>
 void AVL<T>::insert(const T &v) {
     root = insert(root, v);
+}
+
+template<typename T>
+AVLNode<T> *AVL<T>::find_min(AVLNode<T> *node) {
+    if (node == nullptr) {
+        return nullptr;
+    }
+
+    while (node->left != nullptr) {
+        node = node->left;
+    }
+    return node;
+}
+
+template<typename T>
+AVLNode<T> *AVL<T>::remove(AVLNode<T> *node, const T &v) {
+    // avl树也是一颗bst树, 因此删除节点实质与bst是相同的,
+    // 只是需要额外的操作, 在保证在删除节点以后, 树的结构仍然是平衡的
+    if (node == nullptr) {
+        return nullptr;
+    }
+
+    if (node->value == v) {
+        // 找到了待删除的节点 node
+        // 1. 先找到一个节点来替代待删除的节点(原理同bst)
+        // 2. (optional), 将替代节点从原来的树结构中抽离出来
+        AVLNode<T> *replace_node;
+        if (node->right == nullptr) {
+            // 待删节点的右子树为空
+            replace_node = node->left;
+        } else {
+            replace_node = find_min(node->right);
+            // 将替代节点从原来的树结构中删除
+            node->right = remove(node->right, replace_node->value);
+            replace_node->left = node->left;
+            replace_node->right = node->right;
+        }
+
+        node->left = nullptr;
+        node->right = nullptr;
+
+        node = replace_node;
+    } else if (v < node->value) {
+        // 删除待删节点, 并指向替代节点
+        node->left = remove(node->left, v);
+        if (height(node->right) - height(node->left) > 1) {
+            // 失衡
+            if (height(node->right->right) >= height(node->right->left)) {
+                // RR 失衡
+                node = RR_rotate(node);
+            } else {
+                // RL 失衡
+                node = RL_rotate(node);
+            }
+        }
+    } else {
+        node->right = remove(node->right, v);
+        if (height(node->left) - height(node->right) > 1) {
+            // 失衡
+            if (height(node->left->left) >= height(node->left->right)) {
+                // LL 失衡
+                node = LL_rotate(node);
+            } else {
+                // LR 失衡
+                node = LR_rotate(node);
+            }
+        }
+    }
+
+    if (node != nullptr) {
+        node->height = 1 + max(height(node->left), height(node->right));
+    }
+
+    return node;
+}
+
+template<typename T>
+void AVL<T>::remove(const T &v) {
+    if (root == nullptr) {
+        return;
+    }
+
+    root = remove(root, v);
 }
 
 #endif //DATASTRUCT_AVL_TREE_H

@@ -35,10 +35,15 @@ int main(int argc, char* argv[]) {
     t->insert(15);
     t->insert(14);
     t->insert(17);
+    t->insert(20);
 
     t->level_order();
     std::cout << "==================" << std::endl;
-    t->pre_order();
+    t->remove(5);
+    t->level_order();
+    t->remove(6);
+    std::cout << "==================" << std::endl;
+    t->level_order();
 
     delete t;
 
