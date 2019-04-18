@@ -34,6 +34,8 @@ private:
     }
 
     AVLNode<T> *remove(AVLNode<T> *, const T &);
+
+    AVLNode<T> *rebalance(AVLNode<T> *);
 public:
     // LL 型结构, 右旋操作
     AVLNode<T>* LL_rotate(AVLNode<T> *node);
@@ -113,31 +115,32 @@ AVLNode<T> *AVL<T>::insert(AVLNode<T> *node, const T &v) {
     if (v < (node->value)) {
         // 插入的值小于节点值
         node->left = insert(node->left, v);
-        if (height(node->left) - height(node->right) > 1) {
-            if (v < node->left->value) {
-                // LL 失衡
-                node = LL_rotate(node);
-            } else {
-                // LR 失衡
-                node = LR_rotate(node);
-            }
-        }
+//        if (height(node->left) - height(node->right) > 1) {
+//            if (v < node->left->value) {
+//                // LL 失衡
+//                node = LL_rotate(node);
+//            } else {
+//                // LR 失衡
+//                node = LR_rotate(node);
+//            }
+//        }
     } else if (v > (node->value)) {
         node->right = insert(node->right, v);
-        if (height(node->right) - height(node->left) > 1) {
-            if (v > node->right->value) {
-                // RR 失衡
-                node = RR_rotate(node);
-            } else {
-                // RL 失衡
-                node = RL_rotate(node);
-            }
-        }
+//        if (height(node->right) - height(node->left) > 1) {
+//            if (v > node->right->value) {
+//                // RR 失衡
+//                node = RR_rotate(node);
+//            } else {
+//                // RL 失衡
+//                node = RL_rotate(node);
+//            }
+//        }
     }
 
-    node->height = 1 + max(height(node->left), height(node->right));
+//    node->height = 1 + max(height(node->left), height(node->right));
+//    return node;
 
-    return node;
+    return rebalance(node);
 }
 
 template<typename T>
@@ -188,33 +191,64 @@ AVLNode<T> *AVL<T>::remove(AVLNode<T> *node, const T &v) {
     } else if (v < node->value) {
         // 删除待删节点, 并指向替代节点
         node->left = remove(node->left, v);
-        if (height(node->right) - height(node->left) > 1) {
-            // 失衡
-            if (height(node->right->right) >= height(node->right->left)) {
-                // RR 失衡
-                node = RR_rotate(node);
-            } else {
-                // RL 失衡
-                node = RL_rotate(node);
-            }
-        }
+//        if (height(node->right) - height(node->left) > 1) {
+//            // 失衡
+//            if (height(node->right->right) >= height(node->right->left)) {
+//                // RR 失衡
+//                node = RR_rotate(node);
+//            } else {
+//                // RL 失衡
+//                node = RL_rotate(node);
+//            }
+//        }
     } else {
         node->right = remove(node->right, v);
-        if (height(node->left) - height(node->right) > 1) {
-            // 失衡
-            if (height(node->left->left) >= height(node->left->right)) {
-                // LL 失衡
-                node = LL_rotate(node);
-            } else {
-                // LR 失衡
-                node = LR_rotate(node);
-            }
+//        if (height(node->left) - height(node->right) > 1) {
+//            // 失衡
+//            if (height(node->left->left) >= height(node->left->right)) {
+//                // LL 失衡
+//                node = LL_rotate(node);
+//            } else {
+//                // LR 失衡
+//                node = LR_rotate(node);
+//            }
+//        }
+    }
+
+//    if (node != nullptr) {
+//        node->height = 1 + max(height(node->left), height(node->right));
+//    }
+//    return node;
+    return rebalance(node);
+}
+
+template<typename T>
+AVLNode<T> *AVL<T>::rebalance(AVLNode<T> *node) {
+    if (node == nullptr) {
+        return node;
+    }
+
+    if (height(node->left) - height(node->right) > 1) {
+        // L型失衡
+        if (height(node->left->left) >= height(node->left->right)) {
+            // LL 型失衡
+            node = LL_rotate(node);
+        } else {
+            // LR 型失衡
+            node = LR_rotate(node);
+        }
+    } else if (height(node->right) - height(node->left) > 1) {
+        // R型失衡
+        if (height(node->right->right) >= height(node->right->left)) {
+            // RR 型失衡
+            node = RR_rotate(node);
+        } else {
+            // RL 型失衡
+            node = RL_rotate(node);
         }
     }
 
-    if (node != nullptr) {
-        node->height = 1 + max(height(node->left), height(node->right));
-    }
+    node->height = 1 + max(height(node->left), height(node->right));
 
     return node;
 }
